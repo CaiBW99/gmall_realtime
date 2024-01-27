@@ -8,4 +8,7 @@ package com.atguigu.gmall.realtime.common.constant;
  * @Description
  */
 public class Constant {
+    public static void main(String[] args) {
+
+    }
 }
