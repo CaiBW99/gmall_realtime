@@ -1,0 +1,10 @@
+# IntelliJ project files
+.idea
+*.iml
+out
+gen
+
+# Java
+**/target/
+!**/src/main/**/target/
+!**/src/test/**/target/
