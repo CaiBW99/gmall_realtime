@@ -15,7 +15,7 @@
         <module>realtime-dwd</module>
     </modules>
 
-
+    <!-- 声明一些配置， 主要是依赖的版本号 -->
     <properties>
         <java.version>1.8</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -29,6 +29,7 @@
         <hbase.version>2.4.11</hbase.version>
     </properties>
 
+    <!-- 依赖， 会直接导入到父模块中， 未来所有的子模块都会继承这些依赖 -->
     <dependencies>
         <dependency>
             <groupId>org.apache.flink</groupId>
@@ -74,6 +75,12 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-common</artifactId>
+            <version>${hadoop.version}</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-auth</artifactId>
@@ -139,6 +146,10 @@
 
     </dependencies>
 
+    <!--
+       依赖管理, 只用于对依赖的版本进行管理，不会将依赖导入到当前模块，
+       未来，子模块添加该依赖的时候，不需要再声明依赖的版本。
+    -->
     <dependencyManagement>
 
         <dependencies>
