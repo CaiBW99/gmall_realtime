@@ -1,6 +1,7 @@
 package com.atguigu.gmall.realtime.common.util;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.atguigu.gmall.realtime.common.constant.Constant;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hadoop.conf.Configuration;
@@ -9,6 +10,7 @@ import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
+import java.util.Set;
 
 /**
  * @ClassName HBaseUtil
@@ -100,4 +102,36 @@ public class HBaseUtil {
         log.info("删除 " + namespaceName + ":" + tableName + " , 成功!");
     }
 
+    // 单元写入数据
+    public static void putCells(Connection connection, String namespaceName, String tableName, String rowKey, String cf, JSONObject dataObj) throws IOException {
+        TableName tn = TableName.valueOf(namespaceName, tableName);
+        Table table = connection.getTable(tn);
+
+        //写入数据
+        Put put = new Put(Bytes.toBytes(rowKey));
+        Set<String> allColumns = dataObj.keySet();
+        for (String column : allColumns) {
+            String value = dataObj.getString(column);
+            if (value != null) {
+                put.addColumn(Bytes.toBytes(cf), Bytes.toBytes(column), Bytes.toBytes(value));
+            }
+        }
+        table.put(put);
+        table.close();
+
+        log.info("写入 " + rowKey + " 数据到 " + namespaceName + ":" + tableName);
+    }
+
+
+    public static void deleteCells(Connection connection, String namespaceName, String tableName, String rowKey) throws IOException {
+        TableName tn = TableName.valueOf(namespaceName, tableName);
+        Table table = connection.getTable(tn);
+
+        //删除数据
+        Delete delete = new Delete(Bytes.toBytes(rowKey));
+        table.delete(delete);
+        table.close();
+
+        log.info("删除 " + rowKey + " 数据从 " + namespaceName + ":" + tableName);
+    }
 }

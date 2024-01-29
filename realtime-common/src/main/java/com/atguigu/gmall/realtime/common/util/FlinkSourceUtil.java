@@ -4,9 +4,14 @@ import com.atguigu.gmall.realtime.common.constant.Constant;
 import com.ververica.cdc.connectors.mysql.source.MySqlSource;
 import com.ververica.cdc.connectors.mysql.table.StartupOptions;
 import com.ververica.cdc.debezium.JsonDebeziumDeserializationSchema;
-import org.apache.flink.api.common.serialization.SimpleStringSchema;
+import org.apache.flink.api.common.serialization.DeserializationSchema;
+import org.apache.flink.api.common.typeinfo.BasicTypeInfo;
+import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @ClassName FlinkSourceUtil
@@ -28,7 +33,25 @@ public class FlinkSourceUtil {
                 .setGroupId(groupId)
                 .setTopics(topicName)
                 .setValueOnlyDeserializer(
-                        new SimpleStringSchema()
+                        new DeserializationSchema<String>() {
+                            @Override
+                            public String deserialize(byte[] message) throws IOException {
+                                if (message != null) {
+                                    return new String(message, StandardCharsets.UTF_8);
+                                }
+                                return "";
+                            }
+
+                            @Override
+                            public boolean isEndOfStream(String nextElement) {
+                                return false;
+                            }
+
+                            @Override
+                            public TypeInformation<String> getProducedType() {
+                                return BasicTypeInfo.STRING_TYPE_INFO;
+                            }
+                        }
                 )
                 // 方便测试， 不用每次都重新模拟生成数据
                 .setStartingOffsets(OffsetsInitializer.earliest())
