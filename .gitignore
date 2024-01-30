@@ -8,3 +8,4 @@ gen
 **/target/
 !**/src/main/**/target/
 !**/src/test/**/target/
+/a顺序/
