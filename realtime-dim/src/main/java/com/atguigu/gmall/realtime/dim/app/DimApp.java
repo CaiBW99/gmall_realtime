@@ -357,6 +357,7 @@ public class DimApp extends BaseApp {
                     }
                 }
         );
+        System.out.println("=============================================================");
     }
 
     /**
@@ -369,7 +370,7 @@ public class DimApp extends BaseApp {
     public void handle(StreamExecutionEnvironment env, DataStreamSource<String> odsStream) {
 
         // TODO 1. 读取ODS层 topic_db的数据，
-        //stream.print("ods");
+        //odsStream.print("ods");
 
         // TODO 2. 对读取的数据进行清洗过滤
         SingleOutputStreamOperator<JSONObject> etlStream = getEtlStream(odsStream);
@@ -378,10 +379,12 @@ public class DimApp extends BaseApp {
 
         // TODO 3.读取配置表的数据， 动态处理 Hbase中的维度表
         SingleOutputStreamOperator<TableProcessDim> tableProcessDimStream = tableProcessDimStream(env);
+        //tableProcessDimStream.print("table");
 
 
         // TODO 4. 在Hbase中建表or删表
         SingleOutputStreamOperator<TableProcessDim> createOrDropTableStream = createOrDropTable(tableProcessDimStream);
+        //createOrDropTableStream.print("create");
 
 
         // TODO 5. 将配置流处理成广播流
@@ -391,9 +394,11 @@ public class DimApp extends BaseApp {
 
         // TODO 6. 处理topic_db中的维度数据
         SingleOutputStreamOperator<Tuple2<JSONObject, TableProcessDim>> dimStream = filterDimData(etlStream, broadcastStream, mapStateDescriptor);
+        //dimStream.print("dim");
 
         // TODO 7. 过滤出需要写入到Hbase中的字段
         SingleOutputStreamOperator<Tuple2<JSONObject, TableProcessDim>> filterSinkColumnStream = filterSinkColumn(dimStream);
+        //filterSinkColumnStream.print("filter");
 
         // TODO 8. 将数据写出到Hbase的表中
         writeDimDataToHbase(filterSinkColumnStream);
