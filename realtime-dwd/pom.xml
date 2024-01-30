@@ -11,6 +11,7 @@
 
     <artifactId>realtime-dwd</artifactId>
     <packaging>pom</packaging>
+    
     <modules>
         <module>realtime-dwd-base-log</module>
         <module>realtime-dwd-interaction-comment-info</module>
