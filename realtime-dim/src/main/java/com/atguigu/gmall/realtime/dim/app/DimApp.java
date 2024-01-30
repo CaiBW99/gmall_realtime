@@ -357,7 +357,6 @@ public class DimApp extends BaseApp {
                     }
                 }
         );
-        System.out.println("=============================================================");
     }
 
     /**
