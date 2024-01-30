@@ -1,5 +1,6 @@
 package com.atguigu.gmall.realtime.common.util;
 
+import com.atguigu.gmall.realtime.common.bean.TableProcessDim;
 import com.atguigu.gmall.realtime.common.constant.Constant;
 import com.google.common.base.CaseFormat;
 import org.apache.commons.beanutils.BeanUtils;
@@ -88,4 +89,14 @@ public class JdbcUtil {
         return result;
     }
 
+    public static void main(String[] args) throws Exception {
+        Connection connection = getConnection();
+
+        String sql = " select `source_table` , `sink_table` , `sink_family` , `sink_columns`, `sink_row_key` from gmall_config.table_process_dim";
+
+        List<TableProcessDim> tableProcessDimList = queryList(connection, sql, TableProcessDim.class, true);
+        tableProcessDimList.forEach(System.out::println);
+
+        closeConnection(connection);
+    }
 }
