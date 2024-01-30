@@ -58,29 +58,23 @@ public abstract class BaseSQLApp {
 
         // 创建表环境
         StreamTableEnvironment tableEnv = StreamTableEnvironment.create(env);
-        // 读取topic_db数据
-        readOdsTopicDb(tableEnv, ckAndGroupId);
+
         // 数据转换处理
         handle(tableEnv, env, ckAndGroupId);
-        //
-        try {
-            env.execute();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
-    private void readOdsTopicDb(StreamTableEnvironment tableEnv, String groupId) {
-        String sql = "CREATE TABLE topic_db (\n" +
-                "  `database` STRING,\n" +
-                "  `table` STRING,\n" +
-                "  `type` STRING,\n" +
-                "  `ts` BIGINT,\n" +
-                "  `data` MAP<STRING,STRING>,\n" +
-                "  `old` MAP<STRING,STRING>,\n" +
-                "  `pt` as PROCTIME()\n" +
-                ") ";
-        tableEnv.executeSql(sql + FlinkSQLUtil.getKafkaSourceDDL(Constant.TOPIC_DB, groupId));
+    public void readOdsTopicDb(StreamTableEnvironment tableEnv, String groupId) {
+        tableEnv.executeSql(
+                "CREATE TABLE topic_db (\n" +
+                        "  `database` STRING,\n" +
+                        "  `table` STRING,\n" +
+                        "  `type` STRING,\n" +
+                        "  `ts` BIGINT,\n" +
+                        "  `data` MAP<STRING,STRING>,\n" +
+                        "  `old` MAP<STRING,STRING>,\n" +
+                        "  `pt` as PROCTIME() \n" +
+                        ") " + FlinkSQLUtil.getKafkaSourceDDL(Constant.TOPIC_DB, groupId)
+        );
     }
 
     public void readBaseDic(StreamTableEnvironment tableEnv) {
