@@ -240,19 +240,20 @@ public class DwdBaseLogApp extends BaseApp {
 
         // 页面信息流
         SingleOutputStreamOperator<String> pageStream = splitStream(fixIsNewStream, errTag, startTag, actionTag, displayTag);
-        pageStream.print("page");
         // 错误信息流
         SideOutputDataStream<String> errStream = pageStream.getSideOutput(errTag);
-        errStream.print("err");
         // 启动信息流
         SideOutputDataStream<String> startStream = pageStream.getSideOutput(startTag);
-        startStream.print("start");
         // 曝光信息流
         SideOutputDataStream<String> displayStream = pageStream.getSideOutput(displayTag);
-        displayStream.print("dis");
         // 动作信息流
         SideOutputDataStream<String> actionStream = pageStream.getSideOutput(actionTag);
-        actionStream.print("act");
+
+        //pageStream.print("page");
+        //errStream.print("err");
+        //startStream.print("start");
+        //displayStream.print("dis");
+        //actionStream.print("act");
 
         // TODO 4.写出到kafka主题中
         writeToKafka(pageStream, errStream, startStream, actionStream, displayStream);
