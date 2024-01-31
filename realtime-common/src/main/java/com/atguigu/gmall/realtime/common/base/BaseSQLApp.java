@@ -65,14 +65,16 @@ public abstract class BaseSQLApp {
 
     public void readOdsTopicDb(StreamTableEnvironment tableEnv, String groupId) {
         tableEnv.executeSql(
-                "CREATE TABLE topic_db (\n" +
-                        "  `database` STRING,\n" +
-                        "  `table` STRING,\n" +
-                        "  `type` STRING,\n" +
-                        "  `ts` BIGINT,\n" +
-                        "  `data` MAP<STRING,STRING>,\n" +
-                        "  `old` MAP<STRING,STRING>,\n" +
-                        "  `pt` as PROCTIME() \n" +
+                "CREATE TABLE topic_db(\n" +
+                        "    `database` STRING,\n" +
+                        "    `table`    STRING,\n" +
+                        "    `type`     STRING,\n" +
+                        "    `ts`       BIGINT,\n" +
+                        "    `data`     MAP<STRING,STRING>,\n" +
+                        "    `old`      MAP<STRING,STRING>,\n" +
+                        "    `pt` AS PROCTIME(),\n" +
+                        "    `et` AS TO_TIMESTAMP_LTZ(ts*1000,3),\n" +
+                        "    watermark FOR et AS et - INTERVAL '5' SECOND\n" +
                         ") " + FlinkSQLUtil.getKafkaSourceDDL(Constant.TOPIC_DB, groupId)
         );
     }
