@@ -24,7 +24,9 @@ public class Constant {
 
     public static final String TABLE_PROCESS_DATABASE = "gmall_config";
     public static final String TABLE_PROCESS_DIM = "table_process_dim";
-
+    public static final String TABLE_PROCESS_DWD = "table_process_dwd";
+    
+    
     public static final String HBASE_NAMESPACE = "gmall_realtime";
 
     public static final String HBASE_ZOOKEEPER_QUORUM = "linux1,linux2,linux3";
