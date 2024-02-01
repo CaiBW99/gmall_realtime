@@ -37,7 +37,7 @@ public class FlinkSQLUtil {
     public static String getUpsertKafkaSinkDDL(String topicName) {
         return "WITH ( 'connector'='upsert-kafka',\n" +
                 "    'topic'='" + topicName + "',\n" +
-                "    'properties.bootstrap.server'='" + Constant.KAFKA_BROKERS + "',\n" +
+            "    'properties.bootstrap.servers'='" + Constant.KAFKA_BROKERS + "',\n" +
                 "    'key.format'='json',\n" +
                 "    'value.format'='json'\n" +
                 "     )";
