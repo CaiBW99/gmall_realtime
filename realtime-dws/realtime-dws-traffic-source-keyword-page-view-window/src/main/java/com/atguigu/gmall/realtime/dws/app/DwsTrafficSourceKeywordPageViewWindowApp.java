@@ -17,7 +17,7 @@ import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
  */
 public class DwsTrafficSourceKeywordPageViewWindowApp extends BaseSQLApp {
     public static void main(String[] args) {
-        new DwsTrafficSourceKeywordPageViewWindowApp().start(10021, 4, Constant.DWS_TRAFFIC_SOURCE_KEYWORD_PAGE_VIEW_WINDOW);
+        new DwsTrafficSourceKeywordPageViewWindowApp().start(10021, 4, "dws_traffic_source_keyword_page_view_window_app");
     }
     
     @Override
