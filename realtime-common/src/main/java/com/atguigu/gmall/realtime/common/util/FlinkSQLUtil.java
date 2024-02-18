@@ -42,6 +42,17 @@ public class FlinkSQLUtil {
                 "    'value.format'='json'\n" +
                 "     )";
     }
+    
+    public static String getDorisSinkDDL(String tableName) {
+        return " WITH (\n" +
+            "       'connector' = 'doris',\n" +
+            "       'fenodes' = '" + Constant.DORIS_FENODES + "',\n" +
+            "       'table.identifier' = '" + Constant.DORIS_DATABASE + "." + tableName + "',\n" +
+            "       'username' = '" + Constant.DORIS_USERNAME + "',\n" +
+            "       'password' = '" + Constant.DORIS_PASSWORD + "',\n" +
+            "       'sink.enable-2pc' = 'true'\n" +
+            ")";
+    }
 
     public static void main(String[] args) {
         String s = getKafkaSourceDDL("topic_db", "test");

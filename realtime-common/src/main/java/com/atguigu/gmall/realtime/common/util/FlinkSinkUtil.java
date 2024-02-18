@@ -3,6 +3,11 @@ package com.atguigu.gmall.realtime.common.util;
 import com.alibaba.fastjson.JSONObject;
 import com.atguigu.gmall.realtime.common.bean.TableProcessDwd;
 import com.atguigu.gmall.realtime.common.constant.Constant;
+import org.apache.doris.flink.cfg.DorisExecutionOptions;
+import org.apache.doris.flink.cfg.DorisOptions;
+import org.apache.doris.flink.cfg.DorisReadOptions;
+import org.apache.doris.flink.sink.DorisSink;
+import org.apache.doris.flink.sink.writer.SimpleStringSerializer;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.connector.base.DeliveryGuarantee;
@@ -12,6 +17,7 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
 import javax.annotation.Nullable;
+import java.util.Properties;
 
 /**
  * @ClassName FlinkSinkUtil
@@ -55,5 +61,32 @@ public class FlinkSinkUtil {
             .setTransactionalIdPrefix("dwd_base_db-" + System.currentTimeMillis())
             .setProperty(ProducerConfig.TRANSACTION_TIMEOUT_CONFIG, "600000")
             .build();
+    }
+    
+    public static DorisSink<String> getDorisSink(String tableName) {
+        Properties properties = new Properties();
+        // When the upstream is writing json, the configuration needs to be enabled.
+        properties.setProperty("format", "json");
+        properties.setProperty("read_json_by_line", "true");
+        return
+            DorisSink.<String>builder()
+                .setDorisReadOptions(DorisReadOptions.builder().build())
+                .setDorisExecutionOptions(
+                    DorisExecutionOptions.builder()
+                        .setLabelPrefix("label-doris-" + System.currentTimeMillis()) //streamload label prefix
+                        .setDeletable(false)
+                        .setStreamLoadProp(properties)
+                        .build()
+                )
+                .setSerializer(new SimpleStringSerializer()) //serialize according to string
+                .setDorisOptions(
+                    DorisOptions.builder()
+                        .setFenodes(Constant.DORIS_FENODES)
+                        .setTableIdentifier(Constant.DORIS_DATABASE + "." + tableName)
+                        .setUsername(Constant.DORIS_USERNAME)
+                        .setPassword(Constant.DORIS_PASSWORD)
+                        .build()
+                )
+                .build();
     }
 }
