@@ -1,4 +1,4 @@
-package com.atguig.gmall.realtime.dwd.db.app;
+package com.atguigu.gmall.realtime.dwd.db.app;
 
 import com.atguigu.gmall.realtime.common.base.BaseSQLApp;
 import com.atguigu.gmall.realtime.common.constant.Constant;
