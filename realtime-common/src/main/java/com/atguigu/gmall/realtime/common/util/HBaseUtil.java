@@ -5,12 +5,16 @@ import com.alibaba.fastjson.JSONObject;
 import com.atguigu.gmall.realtime.common.constant.Constant;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hbase.Cell;
+import org.apache.hadoop.hbase.CellUtil;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @ClassName HBaseUtil
@@ -32,6 +36,23 @@ public class HBaseUtil {
 
         return ConnectionFactory.createConnection(configuration);
     }
+    
+    /**
+     * 获取异步Connection对象
+     *
+     * @return
+     * @throws Exception
+     */
+    public static AsyncConnection getAsyncConnection() throws Exception {
+        
+        Configuration configuration = new Configuration();
+        configuration.set("hbase.zookeeper.quorum", Constant.HBASE_ZOOKEEPER_QUORUM);
+        //configuration.set("hbase.zookeeper.property.clientPort" , "2181");
+        
+        AsyncConnection asyncConnection = ConnectionFactory.createAsyncConnection(configuration).get();
+        
+        return asyncConnection;
+    }
 
     /**
      * 关闭Connection连接对象
@@ -39,6 +60,18 @@ public class HBaseUtil {
     public static void closeConnection(Connection connection) throws Exception {
         if (connection != null && !connection.isClosed()) {
             connection.close();
+        }
+    }
+    
+    /**
+     * 关闭异步的连接对象
+     *
+     * @param asyncConnection
+     * @throws Exception
+     */
+    public static void closeAsyncConnection(AsyncConnection asyncConnection) throws Exception {
+        if (asyncConnection != null && !asyncConnection.isClosed()) {
+            asyncConnection.close();
         }
     }
 
@@ -133,5 +166,81 @@ public class HBaseUtil {
         table.close();
 
         log.info("删除 " + rowKey + " 数据从 " + namespaceName + ":" + tableName);
+    }
+    
+    /**
+     * 基于rowkey，读取整条数据
+     */
+    
+    public static JSONObject getCells(Connection connection, String namespaceName, String tableName, String rowkey) throws IOException {
+        JSONObject jsonObj = new JSONObject();
+        
+        TableName tn = TableName.valueOf(namespaceName, tableName);
+        Table table = connection.getTable(tn);
+        
+        //读取
+        Get get = new Get(Bytes.toBytes(rowkey));
+        //一行数据
+        Result result = table.get(get);
+        //取出所有的cell
+        List<Cell> cells = result.listCells();
+        for (Cell cell : cells) {
+            //列名
+            String columnName = Bytes.toString(CellUtil.cloneQualifier(cell));
+            //列值
+            String columnValue = Bytes.toString(CellUtil.cloneValue(cell));
+            
+            jsonObj.put(columnName, columnValue);
+            
+        }
+        table.close();
+        
+        return jsonObj;
+    }
+    
+    /**
+     * 异步的读取Hbase的数据
+     *
+     * @param connection
+     * @param namespaceName
+     * @param tableName
+     * @param rowkey
+     * @return
+     * @throws IOException
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
+    public static JSONObject getAsyncCells(AsyncConnection connection, String namespaceName, String tableName, String rowkey) throws IOException, ExecutionException, InterruptedException {
+        JSONObject jsonObj = new JSONObject();
+        
+        TableName tn = TableName.valueOf(namespaceName, tableName);
+        AsyncTable<AdvancedScanResultConsumer> table = connection.getTable(tn);
+        //读取
+        Get get = new Get(Bytes.toBytes(rowkey));
+        //一行数据
+        Result result = table.get(get).get();
+        //取出所有的cell
+        List<Cell> cells = result.listCells();
+        for (Cell cell : cells) {
+            //列名
+            String columnName = Bytes.toString(CellUtil.cloneQualifier(cell));
+            //列值
+            String columnValue = Bytes.toString(CellUtil.cloneValue(cell));
+            
+            jsonObj.put(columnName, columnValue);
+            
+        }
+        
+        return jsonObj;
+    }
+    
+    
+    public static void main(String[] args) throws Exception {
+        Connection connection = getConnection();
+        JSONObject jsonObj = getCells(connection, Constant.HBASE_NAMESPACE, "dim_activity_info", "4");
+        
+        System.out.println(jsonObj.toJSONString());
+        
+        closeConnection(connection);
     }
 }
