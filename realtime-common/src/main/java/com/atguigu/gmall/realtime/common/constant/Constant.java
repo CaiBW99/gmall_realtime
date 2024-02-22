@@ -49,7 +49,7 @@ public class Constant {
     public static final String DWS_USER_USER_LOGIN_WINDOW = "dws_user_user_login_window";
     public static final String DWS_TRADE_CART_ADD_UU_WINDOW = "dws_trade_cart_add_uu_window";
     public static final String DWS_TRADE_SKU_ORDER_WINDOW = "dws_trade_sku_order_window";
-    
+    public static final String DWS_TRADE_PROVINCE_ORDER_WINDOW = "dws_trade_province_order_window";
     
     
     public static final String TOPIC_DWD_TRAFFIC_START = "dwd_traffic_start";
