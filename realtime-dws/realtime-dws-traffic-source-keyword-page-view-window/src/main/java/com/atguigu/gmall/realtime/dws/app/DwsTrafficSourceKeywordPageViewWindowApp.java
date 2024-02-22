@@ -24,22 +24,23 @@ public class DwsTrafficSourceKeywordPageViewWindowApp extends BaseSQLApp {
     public void handle(StreamTableEnvironment tableEnv, StreamExecutionEnvironment env, String groupId) {
         // TODO 1.从Kafka topic_dwd_traffic_page主题读取页面数据
         tableEnv.executeSql(
-            " CREATE TABLE page_info( \n" +
-                " `page` MAP<STRING,STRING>, \n" +
-                " `ts` BIGINT , \n" +
-                " `et` as TO_TIMESTAMP_LTZ(ts,3), \n" +
-                " WATERMARK FOR et AS et - INTERVAL '5' second \n" +
+            "CREATE TABLE page_info (\n" +
+                "  `page` MAP<STRING,STRING>,\n" +
+                "  `ts` BIGINT,\n" +
+                "  `et` as TO_TIMESTAMP_LTZ(ts , 3) ,\n" +
+                "   WATERMARK FOR et AS et - INTERVAL '5' SECOND \n" +
                 ") " + FlinkSQLUtil.getKafkaSourceDDL(Constant.TOPIC_DWD_TRAFFIC_PAGE, groupId)
         );
         
         // TODO 2.筛选出搜索的数据
         Table searchTable = tableEnv.sqlQuery(
-            " select page['item'] keyword,\n" +
-                " et \n" +
-                " from page_info \n" +
-                " where page['last_page_id'] in ('search' , 'home') \n" +
-                " and page['item_type'] = 'keyword' \n" +
-                " and page['item'] is not null "
+            "select \n" +
+                "  `page`['item']  keyword, \n" +
+                "   et \n" +
+                "from page_info \n" +
+                "where `page`['last_page_id'] in ('search' , 'home')\n" +
+                " and  `page`['item_type']  = 'keyword'\n" +
+                " and  `page`['item'] is not null "
         );
         tableEnv.createTemporaryView("search_info", searchTable);
         
