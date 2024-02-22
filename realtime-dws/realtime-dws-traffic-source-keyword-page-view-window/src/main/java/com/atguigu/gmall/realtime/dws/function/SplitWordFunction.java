@@ -17,11 +17,13 @@ import java.util.Set;
  */
 @FunctionHint(output = @DataTypeHint("ROW<word STRING>"))
 public class SplitWordFunction extends TableFunction<Row> {
+    
     public void eval(String searchValue) {
-        // 分词
+        //先分词
         Set<String> words = IkUtil.splitWord(searchValue);
         for (String word : words) {
             collect(Row.of(word));
         }
     }
 }
+

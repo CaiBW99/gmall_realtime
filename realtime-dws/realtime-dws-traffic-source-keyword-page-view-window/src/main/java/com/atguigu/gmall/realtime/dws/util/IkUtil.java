@@ -16,19 +16,22 @@ import java.util.Set;
  * @Description
  */
 public class IkUtil {
+    
     public static Set<String> splitWord(String searchValue) {
         HashSet<String> result = new HashSet<>();
         StringReader reader = new StringReader(searchValue);
+        //Ik 分词处理
         IKSegmenter segmenter = new IKSegmenter(reader, true);
         try {
             Lexeme next = segmenter.next();
             while (next != null) {
                 String word = next.getLexemeText();
                 result.add(word);
+                //取下个词
                 next = segmenter.next();
             }
         } catch (Exception e) {
-            Log.error("分词失败 : " + searchValue);
+            Log.error("分词失败: " + searchValue);
         }
         return result;
     }
