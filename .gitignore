@@ -9,3 +9,4 @@ gen
 !**/src/main/**/target/
 !**/src/test/**/target/
 /a顺序/
+/realtime-common/src/test/java/test.java
