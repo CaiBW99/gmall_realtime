@@ -50,7 +50,7 @@ public class Constant {
     public static final String DWS_TRADE_CART_ADD_UU_WINDOW = "dws_trade_cart_add_uu_window";
     public static final String DWS_TRADE_SKU_ORDER_WINDOW = "dws_trade_sku_order_window";
     public static final String DWS_TRADE_PROVINCE_ORDER_WINDOW = "dws_trade_province_order_window";
-    
+    public static final String DWS_TRADE_PAYMENT_SUC_WINDOW = "dws_trade_payment_suc_window";
     
     public static final String TOPIC_DWD_TRAFFIC_START = "dwd_traffic_start";
     public static final String TOPIC_DWD_TRAFFIC_ERR = "dwd_traffic_err";
